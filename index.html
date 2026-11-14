@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Daniel 3: El Horno de Fuego — Cuento Interactivo Animado</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:ital,wght@0,600;0,700;0,800;1,600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Fondo ambiental dinámico -->
+  <div id="ambient-bg" class="ambient-bg"></div>
+
+  <!-- Pantalla de Portada / Inicio -->
+  <div id="cover-overlay" class="cover-overlay">
+    <div class="cover-card">
+      <div class="cover-badge">📖 HISTORIA BÍBLICA ANIMADA • DANIEL CAPÍTULO 3</div>
+      <h1 class="cover-title">El Horno de Fuego</h1>
+      <p class="cover-subtitle">La increíble historia de valentía y fe de <strong>Sadrac, Mesac y Abed-nego</strong></p>
+
+      <div class="cover-preview">
+        <img src="assets/images/scene6.png" alt="Sadrac, Mesac y Abed-nego en el horno de fuego" class="cover-img" onerror="this.src='assets/images/scene1.png'" />
+        <div class="cover-preview-glow"></div>
+      </div>
+
+      <div class="cover-characters">
+        <div class="char-pill char-sadrac">🟦 Sadrac</div>
+        <div class="char-pill char-mesac">🟩 Mesac</div>
+        <div class="char-pill char-abednego">🟥 Abed-nego</div>
+        <div class="char-pill char-king">👑 Rey Nabucodonosor</div>
+      </div>
+
+      <div class="cover-actions">
+        <button id="btn-start-manual" class="btn-primary btn-large">
+          <span>✨ Comenzar Cuento Paso a Paso</span>
+        </button>
+        <button id="btn-start-auto" class="btn-secondary btn-large">
+          <span>▶️ Ver en Modo Película Automática</span>
+        </button>
+      </div>
+      <p class="cover-hint">Usa las flechas del teclado ⬅️ ➡️ o los botones en pantalla para avanzar por cada escena y subtítulo.</p>
+    </div>
+  </div>
+
+  <!-- Contenedor Principal del Cuento -->
+  <main id="story-app" class="story-app tiktok-mode">
+    <!-- Barra Superior -->
+    <header class="top-bar">
+      <div class="brand-info">
+        <button id="btn-home" class="icon-btn" title="Volver a la portada">🏠</button>
+        <div>
+          <span class="story-tag">DANIEL 3</span>
+          <h2 id="scene-header-title" class="scene-header-title">1. La Estatua de Oro en Dura</h2>
+        </div>
+      </div>
+
+      <!-- Indicador de progreso de escenas (Píldoras 1..8) -->
+      <nav id="scene-dots" class="scene-dots" aria-label="Escenas del cuento"></nav>
+
+      <!-- Controles de Modo y Audio -->
+      <div class="top-controls">
+        <button id="btn-export-video" class="control-pill" title="Grabar y descargar escena o cuento como archivo de video">
+          <span id="export-icon">🎬</span>
+          <span id="export-label">Crear Video</span>
+        </button>
+        <button id="btn-autoplay" class="control-pill" title="Avance automático de escenas con la voz">
+          <span id="autoplay-icon">▶️</span>
+          <span id="autoplay-label">Auto</span>
+        </button>
+        <button id="btn-sfx" class="control-pill active" title="Efectos de sonido ambientales">
+          <span id="sfx-icon">🎵</span>
+          <span>Sonido</span>
+        </button>
+        <button id="btn-voice" class="control-pill active" title="Activar/Desactivar narración de voz">
+          <span id="voice-icon">🔊</span>
+          <span>Voz</span>
+        </button>
+        <button id="btn-voice-settings" class="icon-btn" title="Cambiar voz del narrador y velocidad">🎙️</button>
+        <button id="btn-fullscreen" class="icon-btn" title="Ver imagen en Pantalla Completa">⛶</button>
+      </div>
+    </header>
+
+    <!-- Panel desplegable para cambiar la Voz del Narrador -->
+    <div id="voice-settings-panel" class="voice-settings-panel hidden">
+      <div class="voice-panel-header">
+        <span>🎙️ Configurar Voz Masculina Profunda</span>
+        <button id="btn-close-voice-panel" class="voice-close-btn" title="Cerrar">✖</button>
+      </div>
+      <div class="voice-panel-body">
+        <label class="voice-field">
+          <span id="voice-count-label">Voces detectadas en tu navegador:</span>
+          <select id="voice-select" class="voice-select">
+            <option value="">Cargando voces en español...</option>
+          </select>
+        </label>
+
+        <!-- Lista visual rápida de voces detectadas para probar con 1 clic -->
+        <div id="voice-quick-list" class="voice-quick-list"></div>
+
+        <div class="voice-sliders">
+          <label class="voice-field">
+            <span>Velocidad: <strong id="voice-rate-val">0.95x</strong></span>
+            <input type="range" id="voice-rate" min="0.7" max="1.4" step="0.05" value="0.95" />
+          </label>
+          <label class="voice-field">
+            <span>Tono (Grave / Profundo): <strong id="voice-pitch-val">0.80</strong></span>
+            <input type="range" id="voice-pitch" min="0.55" max="1.4" step="0.05" value="0.80" />
+          </label>
+        </div>
+
+        <label class="voice-checkbox">
+          <input type="checkbox" id="voice-character-mode" checked />
+          <span>🎭 Dramatizar personajes (voz más grave para el Rey y juvenil para los 3 amigos)</span>
+        </label>
+
+        <div class="voice-panel-actions">
+          <button id="btn-test-voice" class="btn-primary btn-small">🔊 Probar Voz Actual</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Escenario Principal 16:9 (Soporta Pantalla Completa directa con doble clic o botón ⛶) -->
+    <section class="stage-wrapper">
+      <div id="stage" class="stage">
+        <!-- Capas de imagen para transición suave y efecto Ken Burns -->
+        <div id="scene-img-layer-a" class="scene-img-layer active"></div>
+        <div id="scene-img-layer-b" class="scene-img-layer"></div>
+
+        <!-- Viñeta e iluminación atmosférica según la escena -->
+        <div id="stage-atmosphere" class="stage-atmosphere"></div>
+
+        <!-- Lienzo HTML5 para animaciones en tiempo real (fuego, chispas, notas musicales, luz divina) -->
+        <canvas id="fx-canvas" class="fx-canvas"></canvas>
+
+        <!-- Insignia superior izquierda: cita bíblica y botón de pantalla completa sobre la imagen -->
+        <div class="stage-top-badges">
+          <div id="bible-ref-badge" class="bible-ref-badge">📜 Daniel 3:1-3</div>
+          <div class="stage-top-right-group">
+            <div id="step-counter-badge" class="step-counter-badge">Parte 1 de 3</div>
+            <button id="btn-stage-fs" class="stage-fs-pill" title="Ver imagen en Pantalla Completa (o haz doble clic en la imagen)">
+              ⛶ Pantalla Completa
+            </button>
+          </div>
+        </div>
+
+        <!-- Botones flotantes laterales para navegar rápido -->
+        <button id="stage-prev-btn" class="stage-nav-btn stage-nav-prev" title="Paso anterior (Flecha Izquierda)">
+          ❮
+        </button>
+        <button id="stage-next-btn" class="stage-nav-btn stage-nav-next" title="Siguiente paso (Flecha Derecha / Espacio)">
+          ❯
+        </button>
+
+        <!-- Subtítulos y Diálogos (En Modo TikTok son 100% transparentes sobre la parte baja de la imagen) -->
+        <div id="subtitle-container" class="subtitle-container">
+          <!-- Globo de diálogo transparente / flotante de personaje -->
+          <div id="speech-bubble" class="speech-bubble hidden">
+            <div class="speech-speaker" id="speech-speaker">👑 Rey Nabucodonosor</div>
+            <div class="speech-text" id="speech-text">«¡Todo el mundo debe inclinarse ante mi estatua de oro!»</div>
+          </div>
+
+          <div class="subtitle-card">
+            <!-- Barra de progreso de lectura del subtítulo actual -->
+            <div class="subtitle-progress-track">
+              <div id="subtitle-progress-bar" class="subtitle-progress-bar"></div>
+            </div>
+
+            <div class="subtitle-header">
+              <span id="narrator-badge" class="narrator-badge">📖 NARRADOR</span>
+              <div id="beat-indicators" class="beat-indicators"></div>
+            </div>
+
+            <p id="subtitle-text" class="subtitle-text">
+              Cargando historia...
+            </p>
+
+            <!-- Controles inferiores compactos -->
+            <div class="subtitle-footer">
+              <button id="btn-prev" class="nav-action-btn nav-prev">
+                ⬅️ Anterior
+              </button>
+
+              <button id="btn-replay-beat" class="nav-replay-btn" title="Repetir esta parte">
+                🔄 Repetir
+              </button>
+
+              <button id="btn-next" class="nav-action-btn nav-next">
+                Siguiente ➡️
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Carrusel inferior de miniaturas de las 8 escenas -->
+    <footer class="timeline-bar">
+      <div id="thumbnails-strip" class="thumbnails-strip"></div>
+    </footer>
+  </main>
+
+  <!-- Modal final de enseñanza / reflexión -->
+  <div id="ending-modal" class="ending-modal hidden">
+    <div class="ending-card">
+      <div class="ending-stars">🌟🔥🛡️✨</div>
+      <h2>¡Fin de la Historia!</h2>
+      <p class="ending-verse">
+        «¡Bendito sea el Dios de Sadrac, Mesac y Abed-nego, que envió a su ángel y libró a sus siervos que confiaron en Él!»
+        <br><strong>— Daniel 3:28</strong>
+      </p>
+      <div class="ending-lesson">
+        <h3>💡 ¿Qué aprendemos de Daniel 3?</h3>
+        <ul>
+          <li><strong>Fidelidad y Valentía:</strong> Sadrac, Mesac y Abed-nego se mantuvieron firmes en lo correcto aunque todos los demás hicieron lo contrario.</li>
+          <li><strong>Confianza Total:</strong> Confiaron en Dios sin importar las consecuencias.</li>
+          <li><strong>Dios está con nosotros:</strong> En medio de las pruebas más difíciles, Dios nunca nos deja solos.</li>
+        </ul>
+      </div>
+      <div class="ending-actions">
+        <button id="btn-restart" class="btn-primary">🔄 Volver a Empezar el Cuento</button>
+        <button id="btn-close-ending" class="btn-secondary">🖼️ Seguir Explorando Escenas</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
